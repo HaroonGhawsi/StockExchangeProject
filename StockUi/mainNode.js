@@ -522,8 +522,4 @@ app.get('/YHOO',function(request,response){
 
 });
 
-
-
-
-
 app.listen(8000,function(){console.log('Listening port 8000');});
