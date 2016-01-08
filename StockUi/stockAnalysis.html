@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="login.css">
+
+    <title>Sign Up</title>
+</head>
+<body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header navbar-right">
+            <form class="navbar-form ">
+                <button type="button" class="btn btn-default">Home</button>
+            </form>
+        </div>
+        <h1 id="navhead" class="navbar-text"><strong>Stock Exchange</strong> <small>Advanced Application Programming Project</small></h1>
+    </div>
+</nav>
+
+<p><h1 id="head">Stock Exchange</h1></p>
+
+<p><h4><strong>Stock Analysis</strong></h4></p>
+
+<script>
+    $(function() {
+        var $element = $("#head");
+        setInterval(function () {
+            $element.fadeOut(1500, function () {
+                $element.fadeIn(1500)
+            });
+        });
+    }, 5000);
+</script>
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="login.css">
+
+    <title>User Profile</title>
+</head>
+<body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header navbar-right">
+            <form class="navbar-form " action="/" id="frmSubmit">
+                <button type="button" class="btn btn-default" id="btnHome">Home</button>
+            </form>
+        </div>
+        <h1 id="navhead" class="navbar-text"><strong>Stock Exchange</strong> <small>Advanced Application Programming Project</small></h1>
+    </div>
+</nav>
+
+<p><h1 id="head">Stock Exchange</h1></p>
+
+<script>
+    $(function() {
+        var $element = $("#head");
+        setInterval(function () {
+            $element.fadeOut(1500, function () {
+                $element.fadeIn(1500)
+            });
+        });
+    }, 5000);
+</script>
+
+<div class="container">
+    <form class="form-horizontal">
+        <p><h4><strong>Your Profile!</strong></h4></p><br />
+        <div class="form-group">
+            <label for="fName" class="col-sm-2 control-label"><strong>First Name</strong></label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" id="fName" placeholder="First Name" maxlength="60" readonly>
+                <span id="fnamespan" value="0"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="lName" class="col-sm-2 control-label"><strong>Last Name</strong></label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" id="lName" placeholder="Last Name" maxlength="60" readonly>
+                <span id="lnamespan" value="0"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputEmail" class="col-sm-2 control-label"><strong>Email</strong></label>
+            <div class="col-sm-6">
+                <input type="email" class="form-control" id="inputEmail" placeholder="Email" maxlength="240" readonly>
+                <span id="emailspan" value="0"></span>
+
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    function getCookie(cname) {
+        var name = cname;
+        var cookie = unescape(document.cookie);
+        try{
+            cookie = (cookie.match(cname+"[=][^;]+"))[0].replace(/(\w+)[=](.+)/g,"$2");
+        }
+        catch(err){
+            return '';
+        }
+        return cookie;
+    }
+    var co = getCookie("alldata");
+    var coJson = JSON.parse(co);
+    $('#fName').val(coJson.fname);
+    $('#lName').val(coJson.lname);
+    $('#inputEmail').val(coJson.email);
+    $('#btnHome').click(function(){
+        $('#frmSubmit').submit();
+    });
+</script>
+
+
+
+</body>
+</html>

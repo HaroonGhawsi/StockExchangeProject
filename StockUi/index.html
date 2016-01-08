@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="index.css">
+    <title>:: Stock Exchange ::</title>
+
+
+</head>
+<body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header navbar-right" id="signInOut">
+            <form class="navbar-form " action="/" id="frmSubmit">
+                <button type="button" class="btn btn-default navbar-btn" id="butSignUp">Sign up</button>
+                <button type="button" class="btn btn-default navbar-btn" id="butSignIn">Sign in</button>
+            </form>
+        </div>
+        <h1 id="navhead" class="navbar-text"><strong>Stock Exchange</strong> <small>Advanced Application Programming Project</small></h1>
+    </div>
+</nav>
+
+<script>
+
+    function getCookie(cname) {
+        var name = cname;
+        var cookie = unescape(document.cookie);
+        try{
+            cookie = (cookie.match(cname+"[=][^;]+"))[0].replace(/(\w+)[=](.+)/g,"$2");
+        }
+        catch(err){
+            return '';
+        }
+
+        return cookie;
+    }
+    console.log(document.cookie);
+    var co = getCookie("username");
+    if (co){
+        $('#butSignUp').hide();
+        $('#butSignIn').hide();
+        $('#signInOut').html(
+                '<div class="dropdown">'+
+                        '<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">'+
+                co +
+                        '<span class="caret"></span></button>'+
+                        '<ul class="dropdown-menu">'+
+                        '<li><a href="s">HTML</a></li>'+
+                        ' <li><a href="#">CSS</a></li>'+
+                        '<li><a href="signOut">Sign Out!</a></li>'+
+                        '</ul>'+
+                        '</div>'
+        );
+    }
+    $('#butSignUp').click(function(){
+        console.log("this");
+        $('#frmSubmit').attr('action', 'signUp');
+        $('#frmSubmit').submit();
+    });
+
+    $('#butSignIn').click(function(){
+        $('#frmSubmit').attr('action', 'signIn');
+        $('#frmSubmit').submit();
+    });
+</script>
+
+
+<p><h1 id="head">Stock Exchange</h1></p>
+
+<script>
+    $(function() {
+        var $element = $("#head");
+        setInterval(function () {
+            $element.fadeOut(1500, function () {
+                $element.fadeIn(1500)
+            });
+        });
+    }, 5000);
+
+</script>
+
+<div class="container">
+
+<div id="row">
+    <div class="col-xs-6 col-md-3">
+        <div class="thumbnail">
+            <div class="caption">
+                <img src="StockAnalysis.jpg" width="240px">
+                <h3 align="center"><strong>Stock Analysis</strong></h3>
+                <p align="center"><strong>Please click below for Stock Analysis View</strong></p>
+                <p align="center"><a href="Rules" class="btn btn-primary" role="button">View Stocks</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="row1">
+    <div class="col-xs-6 col-md-3">
+        <div class="thumbnail">
+            <div class="caption">
+                <img src="profile.jpg" width="190px">
+                <h3 align="center"><strong>User Profile</strong></h3>
+                <p align="center"><strong>Please click below to view User Profiles</strong></p>
+                <p align="center"><a href="profile" class="btn btn-primary" role="button">View Profiles</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="row2">
+    <div class="col-xs-6 col-md-3">
+        <div class="thumbnail">
+            <div class="caption">
+                <img src="videoChat.jpg" width="170px">
+                <h3 align="center"><strong>Group Video Conference</strong></h3>
+                <p align="center"><strong>Please click below to view User Profiles</strong></p>
+                <p align="center"><a href="#" class="btn btn-primary" role="button">Group Chat</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+
+
+
+
+</body>
+</html>

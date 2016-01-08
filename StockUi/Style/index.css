@@ -1,0 +1,31 @@
+body {
+    background-color: #778899;
+}
+#row, #row1, #row2 {
+    display: inline;
+    float: none;
+    text-align: center;
+    margin-left: 50px;
+
+
+}
+
+#head {
+    margin-top: 100px;
+    font-family: Times New Roman;
+    text-align: center;
+    font-size: 100px;
+    color: #5f6975;
+    mso-border-shadow: yes;
+}
+
+.container{
+    margin-left: 25%;
+    margin-top: 5%;
+    margin-right: 25%;
+}
+
+#navhead {
+    font-family: Times New Roman;
+    font-weight: bold;
+}

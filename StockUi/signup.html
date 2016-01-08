@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="login.css">
+
+    <title>Sign Up</title>
+</head>
+<body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header navbar-right">
+            <form class="navbar-form ">
+                <button type="button" class="btn btn-default">Home</button>
+            </form>
+        </div>
+        <h1 id="navhead" class="navbar-text"><strong>Stock Exchange</strong> <small>Advanced Application Programming Project</small></h1>
+    </div>
+</nav>
+
+<p><h1 id="head">Stock Exchange</h1></p>
+
+<script>
+    $(function() {
+        var $element = $("#head");
+        setInterval(function () {
+            $element.fadeOut(1500, function () {
+                $element.fadeIn(1500)
+            });
+        });
+    }, 5000);
+</script>
+
+<div class="container">
+    <form class="form-horizontal" action="reg" method="post" id="frmSubmit">
+        <p><h4><strong>Please Sign up</strong></h4></p><br />
+        <div class="form-group">
+            <label for="fName" class="col-sm-2 control-label"><strong>First Name</strong></label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" id="fName" placeholder="First Name" maxlength="60" required>
+                <span id="fnamespan" value="0"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="lName" class="col-sm-2 control-label"><strong>Last Name</strong></label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" id="lName" placeholder="Last Name" maxlength="60" required>
+                <span id="lnamespan" value="0"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputEmail" class="col-sm-2 control-label"><strong>Email</strong></label>
+            <div class="col-sm-6">
+                <input type="email" class="form-control" id="inputEmail" placeholder="Email" maxlength="240" required>
+                <span id="emailspan" value="0"></span>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputPass" class="col-sm-2 control-label"><strong>New Password</strong></label>
+            <div class="col-sm-6">
+                <input type="password" class="form-control" id="inputPass" placeholder="New Password" maxlength="40" required>
+                <span id="passwordspan" value="0"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-6">
+                <button type="button" class="btn btn-default" id="butSignUp">Register</button>
+                <button type="button" class="btn btn-default" id="butCancel">Cancel</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+<script>
+    function validateEmail(email) {
+        var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }
+    $("#inputEmail").blur(function()
+    {
+        var emailaddress = $("#inputEmail").val();
+        if(!validateEmail(emailaddress))
+            $("#emailspan").html('<font color="#cc0000">Please enter valid Email address</font>');
+        else
+            $("#emailspan").html('<font color="#cc0000"></font>');
+    });
+
+    $('#inputPass').keyup(function(e) {
+        var strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g");
+        var mediumRegex = new RegExp("^(?=.{7,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
+        var enoughRegex = new RegExp("(?=.{6,}).*", "g");
+        if (false == enoughRegex.test($(this).val())) {
+            $('#passwordspan').html('More Characters');
+        } else if (strongRegex.test($(this).val())) {
+            $('#passwordspan').attr('class','ok');
+            $('#passwordspan').html('Strong!');
+        } else if (mediumRegex.test($(this).val())) {
+            $('#passwordspan').attr('class','alert');
+            $('#passwordspan').html('Medium!');
+        } else {
+            $('#passwordspan').attr('class','error');
+            $('#passwordspan').html('Weak!');
+        }
+        return true;
+    });
+
+    function chkRequired(idName,idSpan){
+        if(!$('#'+idName).val()){
+            $('#'+idSpan).html('<font color="#cc0000">Please fill required field</font>');
+            return 0;
+        }
+        else{
+            if (idName=='inputEmail') {
+                $.post('chkEmailUnique', {"username": $('#inputEmail').val()}, function (data) {
+                    if (!data.error) {
+                        $('#emailspan').html('<font color="#cc0000">This Username is selected before!!!</font>');
+                        return 0;
+                    }
+                    else{
+                        $('#'+idSpan).html('<font color="#cc0000"></font>');
+                        return 1;
+                    }
+                }, "json");
+            }
+            else{
+                $('#'+idSpan).html('<font color="#cc0000"></font>');
+                return 1;
+            }
+        }
+    }
+
+    $('#fName').blur(function(){chkRequired('fName','fnamespan');});
+    $('#lName').blur(function(){chkRequired('lName','lnamespan');});
+    $('#inputPass').blur(function(){chkRequired('inputPass','passwordspan');});
+
+    $('#butSignUp').click(function(){
+        if (chkRequired('fName','fnamespan')){
+            if (chkRequired('lName','lnamespan')){
+                if (chkRequired('inputEmail','emailspan')){
+                    if (chkRequired('inputPass','passwordspan')){
+                        $.post('reg',{"username":$('#inputEmail').val(),
+                            "password": $('#inputPass').val(),
+                            "fname": $('#fName').val(),
+                            "lname": $('#lName').val()},function(data){
+                            //alert(data.message);
+                            //window.location.replace("/signIn");
+                        },"json");
+                    }
+                }
+            }
+        }});
+</script>
+
+
+
+</body>
+</html>

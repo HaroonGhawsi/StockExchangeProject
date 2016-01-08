@@ -1,0 +1,62 @@
+body {
+    background-color: #778899;
+}
+
+.container {
+    margin-top: 100px;
+    border-style: solid;
+    padding: 20px;
+    border-color: transparent;
+    background-color: whitesmoke;
+    border-radius: 10px;
+    border-width: 20px;
+}
+#head {
+    margin-top: 100px;
+    font-family: Times New Roman;
+    text-align: center;
+    font-size: 100px;
+    color: #5f6975;
+    mso-border-shadow: yes;
+}
+label {
+    font-family: Times New Roman;
+    color: #5f6975;
+    font-size: 24px;
+}
+h4 {
+    text-align: center;
+    font-family: Times New Roman;
+    font-size: 36px;
+    color: #5f6975;
+    margin-bottom: 10px;
+
+}
+#navhead {
+    font-family: Times New Roman;
+    font-weight: bold;
+}
+#fPass {
+    font-family: Times New Roman;
+    font-size: 18px;
+}
+.error {
+    color: #e40000;
+    font-family:verdana;
+    font-size:10px;
+    font-weight:bold;
+}
+
+.alert {
+    color: #ece728;
+    font-family:verdana;
+    font-size:10px;
+    font-weight:bold;
+}
+
+.ok {
+    color: #17b43d;
+    font-family:verdana;
+    font-size:10px;
+    font-weight:bold;
+}
