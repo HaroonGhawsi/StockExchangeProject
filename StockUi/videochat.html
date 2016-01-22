@@ -1,0 +1,201 @@
+
+<html>
+<head>
+    <title>Stock Exchange</title>
+    <style>
+        .button {
+            color: white;
+            padding: 5px;
+            cursor: pointer;
+            border:2px solid #008CBA;
+        }
+
+        input {
+            height: 26px;
+        }
+
+        .green {
+            background: rgb(28, 184, 65);
+        }
+
+        .red {
+            background: rgb(202, 60, 60);
+        }
+
+        #mylocal-video, #remote-video {
+            margin-top: 16px;
+            width: 45%;
+            background-color: #eee;
+            border: 10px dotted black;
+        }
+
+        #video-container {
+            padding: 25px;
+            text-align: center;
+        }
+        h1 {
+            font-family: "Times New Roman", Times, serif;
+            font-style: italic;
+            font-weight: bold;
+            color: red;
+        }
+
+        #Host-id {
+            font-weight: bold;
+        }
+
+        #buttons {
+            text-align: center;
+
+        }
+
+        #Close-call {
+            display: none;
+        }
+        #style1 {
+            border: 10px solid black;
+            padding: 35px;
+            background-color: lightblue;
+            background-repeat: no-repeat;
+            background-origin: content-box;
+        }
+
+    </style>
+    <script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
+    <script src='https://code.jquery.com/jquery-2.1.3.min.js'></script>
+    <script src="http://cdn.peerjs.com/0.3/peer.min.js"></script>
+
+    <script>
+        var socket = io.connect();
+        $(document).ready(
+                function() {
+                        socket.on('result',function(data){
+                            console.log("Arash: " + data[0].user);
+                            $('#show').html('');
+                        if (data.length >= 1){
+                            for (var key in data){
+                            $('#show').append('<div><a id="' + data[key].user + '" href="javascript:;" onclick="opensolution(\''+ data[key].user +'\');">'+data[key].name+'</a>');
+                        }
+                        }});
+                    socket.on('delID',function(data){
+                        $('a:contains('+data.user+')').remove();
+                    });
+                });
+        function opensolution(tagID) {
+            $('#call-to-des').val(tagID);
+        }
+
+        function getCookie(cname) {
+            var name = cname;
+            var cookie = unescape(document.cookie);
+            try{
+                cookie = (cookie.match(cname+"[=][^;]+"))[0].replace(/(\w+)[=](.+)/g,"$2");
+            }
+            catch(err){
+                return '';
+            }
+            return cookie;
+        }
+        var co = getCookie("alldata");
+        var coJson = JSON.parse(co);
+        console.log(coJson.user);
+        // This method used to get user permission to use audio,video input deivce(webcam and microphone)
+        //this code used to cope with various browser(chorom,firefox)
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+        // Create peer for Peer connection
+        var pc1 = new Peer({
+            key: '3urazytsopkqpvi', debug: 3, config: {
+                'iceServers': [
+                    { url: 'stun:stun.l.google.com:19302' } // use ICE framework to find the best path between peers
+                ]
+            }
+        });
+        // to Every Peer object a random number is assigned that is unique.
+        //start coonection
+        pc1.on('open', function () {
+            $('#Host-id').text(pc1.id);
+
+            socket.emit('hostID', {"id":pc1.id,"user":coJson.user});
+
+        });
+        // Receive connection
+        pc1.on('call', function (call) {
+            call.answer(window.localStream);
+            ManageCall(call);
+        });
+        //kkkkkkkkkkkkkkkkkkkkkk
+        $(function () {
+            $('#start-call').click(function () {
+                // Call another pc by using pc1.call and  ID of the destination pc that generate from peerjs 
+                var call = pc1.call($('#call-to-des').val(), window.localStream);
+                ManageCall(call);
+            });
+            $('#end-call').click(function () {
+                window.existingCall.close();
+                clearUI();
+            });
+            // start calling proccess 
+            startCall();
+        });
+        function startCall() {
+            // catch the video and audio stream from user
+            navigator.getUserMedia({ audio: true, video: true }, function (stream) {
+                // display video
+                $('#mylocal-video').prop('src', URL.createObjectURL(stream));
+                window.localStream = stream;
+                clearUI();
+            }, function () { console.log('error') });
+        }
+        function clearUI() {
+            $('#close-call').hide();
+            $('#call-interface').show();
+        }
+        function ManageCall(call) {
+            // Hang up on an existing call if present
+            if (window.existingCall) {
+                window.existingCall.close();
+            }
+            // Wait for stream on the call, then set peer video display
+            call.on('stream', function (stream) {
+                $('#remote-video').prop('src', URL.createObjectURL(stream));
+            });
+            // UI stuff
+            window.existingCall = call;
+            $('#their-id').text(call.pc1);
+            call.on('close', clearUI);
+            $('#call-interface').hide();
+            $('#Close-call').show();
+        }
+    </script>
+</head>
+<body>
+
+<div id="style1">
+    <h1>Stock Exchange</h1>
+    <div>
+
+        <div id='video-container'>
+            <video id='remote-video' autoplay=''></video>
+            <video id='mylocal-video' muted='true' autoplay=''></video>
+        </div>
+
+        <div id='buttons'>
+
+            <div id='call-interface'>
+                <p>My ID: <span id='Host-id'></span></p>
+                <div>
+                    <input type='text' placeholder='Please enter the destination id...' id='call-to-des'>
+                    <span class='button green' id='start-call'>Start Call</span>
+                </div>
+            </div>
+
+            <div id='Close-call'>
+                <p>Currently in call with <span id='their-id'></span></p>
+                <p><span class='button red' id='end-call'>End call</span></p>
+            </div>
+        </div>
+        <div id="show"></div>
+    </div>
+</div>
+</body>
+</html>

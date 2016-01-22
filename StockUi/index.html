@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
     <link rel="stylesheet" href="index.css">
     <title>:: Stock Exchange ::</title>
 
@@ -50,12 +51,20 @@
                 co +
                         '<span class="caret"></span></button>'+
                         '<ul class="dropdown-menu">'+
-                        '<li><a href="Rules">Charts</a></li>'+
-                        ' <li><a href="profile">Profile</a></li>'+
+                        '<li><a href="s">HTML</a></li>'+
+                        ' <li><a href="#">CSS</a></li>'+
                         '<li><a href="signOut">Sign Out!</a></li>'+
                         '</ul>'+
                         '</div>'
         );
+    }
+    else{
+        co = getCookie("userout");
+        if (co){
+            coJson = JSON.parse(co);
+            var socket = io.connect();
+            socket.emit('deleteUser', {"user":coJson.user});
+        }
     }
     $('#butSignUp').click(function(){
         console.log("this");
@@ -119,7 +128,7 @@
                 <img src="videoChat.jpg" width="170px">
                 <h3 align="center"><strong>Group Video Conference</strong></h3>
                 <p align="center"><strong>Please click below to view User Profiles</strong></p>
-                <p align="center"><a href="#" class="btn btn-primary" role="button">Group Chat</a></p>
+                <p align="center"><a href="vchat" class="btn btn-primary" role="button">Group Chat</a></p>
             </div>
         </div>
     </div>

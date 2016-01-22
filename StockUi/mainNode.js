@@ -1,13 +1,16 @@
 /**
  * Created by oracle on 12/2/15.
  */
+var http = require('http');
 var oracledb = require('oracledb');
 var dbConfig = require('./dbconfig.js');
 var bodyParser=require('body-parser');
 var express = require('express');
 var cookieParser = require('cookie-parser');
 var fs = require('fs');
+var io = require('socket.io');
 var app = express();
+var server = http.createServer(app);
 
 app.use(cookieParser());
 
@@ -84,10 +87,11 @@ app.post('/login',function(req,res){
                         }
 
                         doRelease(connection);
+                        console.log(result);
                         res.header("Content-Type", "application/json; charset=utf-8");
                         res.write(result.outBinds.rslt);
                         res.end();
-                        //console.log(result);
+
                     }); // end connection
 
 
@@ -164,7 +168,7 @@ app.post('/reg',function(req,res){
     var pass = req.body.password;
     var fname = req.body.fname;
     var lname = req.body.lname;
-    //console.log(request.body);
+    console.log("reg " + username);
     var validity = 0;
     oracledb.getConnection(
         {
@@ -228,6 +232,18 @@ app.get('/signIn',function(request,response){
     response.sendfile('login.html',{root:__dirname});
 });
 
+//video chat page
+app.get('/vchat',function(request,response){
+    if (request.cookies.username){
+        response.cookie('username' , request.cookies.username, {expire : new Date() + (0.00005787*24*60*60*1000)});
+        response.cookie('alldata' , request.cookies.alldata, {expire : new Date() + (0.00005787*24*60*60*1000)});
+        response.sendfile('videochat.html',{root:__dirname});
+    }
+    else{
+        response.sendfile('login.html',{root:__dirname});
+    }
+});
+
 
 //signUp page
 app.get('/signUp',function(request,response){
@@ -261,9 +277,53 @@ app.get('/profile',function(request,response){
 
 //signOut
 app.get('/signOut',function(request,response){
+    var usrDelete = (JSON.parse(request.cookies.alldata)).user;
+    response.cookie('userout' , request.cookies.alldata, {expire : new Date() + (0.00005787*24*60*60*1000)});
     response.clearCookie('username');
     response.clearCookie('alldata');
     response.sendfile('index.html',{root:__dirname});
+    oracledb.getConnection(
+        {
+            user          : dbConfig.user,
+            password      : dbConfig.password,
+            connectString : dbConfig.connectString
+        },
+        function(err, connection)
+        {
+            if (err) {
+                console.error(err.message);
+                return;
+            }
+            var stmt = 'begin '+
+                'app_user_security.update_video_chat_id(:u,NULL); '+
+                'end;';
+            connection.execute(
+                stmt,
+                {
+                    u:usrDelete
+                },
+                function(err, result)
+                {
+                    //console.log(result.outBinds.res);
+                    if (err) {
+                        console.error(err.message);
+                        doRelease(connection);
+                    }
+
+                    doRelease(connection);
+
+                });
+
+            function doRelease(connection)
+            {
+                connection.release(
+                    function(err) {
+                        if (err) {
+                            console.error(err.message);
+                        }
+                    });
+            }
+        });
 });
 
 function getMainChartJson(symbol,response){
@@ -522,4 +582,67 @@ app.get('/YHOO',function(request,response){
 
 });
 
-app.listen(8000,function(){console.log('Listening port 8000');});
+
+
+
+
+server.listen(8000,function(){console.log('Listening port 8000');});
+var myIoListener = io.listen(server);
+myIoListener.sockets.on('connection', function(socket){
+    socket.on('deleteUser',function(data){
+        socket.broadcast.emit('delID',data);
+    });
+    socket.on('hostID', function(data){
+        var userExchange = data.user;
+        var videoID = data.id;
+        oracledb.getConnection(
+            {
+                user          : dbConfig.user,
+                password      : dbConfig.password,
+                connectString : dbConfig.connectString
+            },
+            function(err, connection)
+            {
+                if (err) {
+                    console.error(err.message);
+                    return;
+                }
+                var stmt = 'begin '+
+                    'app_user_security.update_video_chat_id(:u,:v); '+
+                    ':res := app_user_security.get_online_users_video_chat (:u); '+
+                    'end;';
+                connection.execute(
+                    stmt,
+                    {
+                        res:{dir:oracledb.BIND_OUT,type:oracledb.STRING,maxSize:32767},
+                        u:userExchange,
+                        v:videoID
+                    },
+                    function(err, result)
+                    {
+                        //console.log(result.outBinds.res);
+                        if (err) {
+                            console.error(err.message);
+                            doRelease(connection);
+                        }
+
+                        doRelease(connection);
+                        var lob = result.outBinds.res;
+                        console.log(lob);
+                        var lobJson = JSON.parse(lob);
+                        myIoListener.sockets.emit('result',lobJson);
+
+                    });
+
+                function doRelease(connection)
+                {
+                    connection.release(
+                        function(err) {
+                            if (err) {
+                                console.error(err.message);
+                            }
+                        });
+                }
+            });
+    });
+});
